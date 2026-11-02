@@ -1,0 +1,1862 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perkalian Matriks - Al Mazaya Islamic School</title>
+    <!-- Google Fonts: Plus Jakarta Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Konfigurasi MathJax v3 -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: { fontCache: 'global' },
+            startup: {
+                ready: () => {
+                    MathJax.startup.defaultReady();
+                    window.mathjaxReady = true;
+                }
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --bg-body: #f4f7f6;
+            --surface: #ffffff;
+            --primary: #0284c7; /* Sky Blue Deep */
+            --primary-dark: #0369a1;
+            --primary-soft: #e0f2fe;
+            --secondary: #6366f1; /* Indigo */
+            --secondary-soft: #eef2ff;
+            --accent-pink: #ec4899; /* Pink / Rose khas sub-bab */
+            --accent-pink-soft: #fdf2f8;
+            --accent-amber: #f59e0b; /* Amber Definisi */
+            --accent-amber-soft: #fffbeb;
+            --accent-emerald: #10b981;
+            --accent-emerald-soft: #ecfdf5;
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --border-soft: #e2e8f0;
+            --radius-2xl: 24px;
+            --radius-xl: 18px;
+            --radius-lg: 14px;
+            --radius-md: 10px;
+            --shadow-card: 0 10px 25px -4px rgba(2, 132, 199, 0.05), 0 8px 16px -6px rgba(0, 0, 0, 0.03);
+            --shadow-float: 0 20px 30px -10px rgba(15, 23, 42, 0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-dark);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .app-window {
+            width: 100%;
+            max-width: 1400px;
+            background: var(--surface);
+            border-radius: 32px;
+            box-shadow: var(--shadow-float);
+            border: 1px solid #f1f5f9;
+            display: grid;
+            grid-template-columns: 290px 1fr;
+            min-height: 880px;
+            overflow: hidden;
+        }
+
+        /* SIDEBAR KIRI */
+        .sidebar {
+            background: #fafcfb;
+            border-right: 1.5px solid var(--border-soft);
+            padding: 28px 22px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .brand-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+
+        .brand-logo-icon {
+            width: 46px;
+            height: 46px;
+            background: linear-gradient(135deg, #0284c7, #6366f1);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.3rem;
+            box-shadow: 0 8px 18px rgba(2, 132, 199, 0.28);
+        }
+
+        .brand-title-text h2 {
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            line-height: 1.2;
+        }
+
+        .brand-title-text p {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-top: 2px;
+        }
+
+        .nav-label {
+            font-size: 0.72rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: #94a3b8;
+            letter-spacing: 0.08em;
+            margin-bottom: 12px;
+            padding-left: 8px;
+        }
+
+        .slide-nav-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .slide-nav-btn {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 13px 16px;
+            border-radius: var(--radius-lg);
+            border: 1.5px solid transparent;
+            background: transparent;
+            color: var(--text-muted);
+            font-size: 0.86rem;
+            font-weight: 700;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.22s;
+        }
+
+        .slide-nav-btn i {
+            font-size: 1.05rem;
+            width: 22px;
+            text-align: center;
+            color: #94a3b8;
+            transition: color 0.2s;
+        }
+
+        .slide-nav-btn:hover {
+            background: #f1f5f9;
+            color: var(--text-dark);
+        }
+
+        .slide-nav-btn.active {
+            background: var(--surface);
+            color: var(--primary-dark);
+            border-color: #bae6fd;
+            box-shadow: 0 4px 16px rgba(2, 132, 199, 0.08);
+        }
+
+        .slide-nav-btn.active i {
+            color: var(--primary);
+        }
+
+        .slide-num-pill {
+            margin-left: auto;
+            font-size: 0.7rem;
+            padding: 2px 7px;
+            border-radius: 99px;
+            background: #e2e8f0;
+            color: #64748b;
+        }
+
+        .slide-nav-btn.active .slide-num-pill {
+            background: var(--primary-soft);
+            color: var(--primary-dark);
+            font-weight: 800;
+        }
+
+        .sidebar-promo-card {
+            background: linear-gradient(135deg, #0284c7 0%, #4338ca 100%);
+            border-radius: var(--radius-xl);
+            padding: 20px;
+            color: white;
+            text-align: center;
+            box-shadow: 0 10px 20px rgba(2, 132, 199, 0.25);
+        }
+
+        .sidebar-promo-card h4 {
+            font-size: 0.95rem;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+
+        .sidebar-promo-card p {
+            font-size: 0.75rem;
+            opacity: 0.9;
+            line-height: 1.4;
+            margin-bottom: 12px;
+        }
+
+        .btn-quick-calc {
+            background: white;
+            color: var(--primary-dark);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .btn-quick-calc:hover {
+            transform: scale(1.04);
+        }
+
+        /* AREA VIEWPORT KANAN */
+        .main-viewport {
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            max-height: 94vh;
+            background: #ffffff;
+        }
+
+        .top-navbar {
+            padding: 24px 36px 18px;
+            border-bottom: 1px solid var(--border-soft);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            background: rgba(255, 255, 255, 0.94);
+            backdrop-filter: blur(8px);
+            z-index: 20;
+        }
+
+        .breadcrumb-tag {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-muted);
+        }
+
+        .breadcrumb-tag span.badge-class {
+            background: #f1f5f9;
+            color: #334155;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-weight: 800;
+        }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .slide-stepper-btn {
+            background: #f8fafc;
+            border: 1.5px solid var(--border-soft);
+            padding: 8px 14px;
+            border-radius: 12px;
+            font-size: 0.82rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .slide-stepper-btn:hover:not(:disabled) {
+            background: var(--primary-soft);
+            border-color: var(--primary);
+            color: var(--primary-dark);
+        }
+
+        .slide-stepper-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .slide-indicator-tag {
+            font-size: 0.85rem;
+            font-weight: 800;
+            color: var(--primary-dark);
+            background: var(--primary-soft);
+            padding: 6px 14px;
+            border-radius: 12px;
+        }
+
+        /* HERO BANNER - Sesuai perbaikan sebelumnya: Lega, Tengah, dan Tidak Terpotong */
+        .hero-banner {
+            margin: 24px 36px 16px;
+            background: linear-gradient(135deg, #0284c7 0%, #3b82f6 50%, #6366f1 100%);
+            border-radius: 28px;
+            padding: 36px 32px;
+            color: white;
+            position: relative;
+            height: auto;
+            box-shadow: 0 16px 36px -10px rgba(2, 132, 199, 0.35);
+        }
+
+        .hero-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            width: 100%;
+        }
+
+        .hero-pill-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.22);
+            backdrop-filter: blur(12px);
+            border: 1.5px solid rgba(255, 255, 255, 0.35);
+            padding: 8px 22px;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 800;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            margin-bottom: 14px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+        }
+
+        .hero-content h1 {
+            font-size: 1.85rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            margin: 4px 0 10px 0;
+            line-height: 1.35;
+            text-align: center;
+            color: #ffffff;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+        }
+
+        .hero-content p {
+            font-size: 0.92rem;
+            opacity: 0.95;
+            max-width: 740px;
+            line-height: 1.6;
+            margin: 0 auto;
+            text-align: center;
+            color: #f0f9ff;
+        }
+
+        .hero-stats-row {
+            display: flex;
+            gap: 14px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .hero-stat-pill {
+            background: rgba(255, 255, 255, 0.18);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            padding: 7px 18px;
+            border-radius: 99px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .hero-stat-pill i {
+            color: #fef08a;
+        }
+
+        /* CANVAS KONTEN */
+        .content-canvas {
+            padding: 10px 36px 40px;
+        }
+
+        .slide-pane {
+            display: none;
+            animation: fadeIn 0.3s ease forwards;
+        }
+
+        .slide-pane.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* CARD GAYA MODERN */
+        .learning-card {
+            background: var(--surface);
+            border-radius: var(--radius-2xl);
+            padding: 28px;
+            border: 1.5px solid var(--border-soft);
+            box-shadow: var(--shadow-card);
+            margin-bottom: 24px;
+            position: relative;
+        }
+
+        .card-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 99px;
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            margin-bottom: 12px;
+        }
+
+        .badge-amber { background: var(--accent-amber-soft); color: #b45309; }
+        .badge-pink { background: var(--accent-pink-soft); color: #be185d; }
+        .badge-blue { background: var(--primary-soft); color: var(--primary-dark); }
+        .badge-indigo { background: var(--secondary-soft); color: var(--secondary); }
+        .badge-emerald { background: var(--accent-emerald-soft); color: #047857; }
+
+        .card-headline {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-desc {
+            font-size: 0.92rem;
+            color: #475569;
+            line-height: 1.65;
+            margin-bottom: 16px;
+        }
+
+        /* DEFINITION BOX (Definisi 3.6, Definisi 3.7) */
+        .def-box-styled {
+            background: #fffbeb;
+            border: 1.5px solid #fde68a;
+            border-radius: var(--radius-xl);
+            padding: 22px 26px;
+            margin: 18px 0;
+            position: relative;
+        }
+
+        .def-box-styled.def-blue {
+            background: #f0f9ff;
+            border-color: #bae6fd;
+        }
+
+        .def-box-styled.def-pink {
+            background: #fdf2f8;
+            border-color: #fbcfe8;
+        }
+
+        .def-box-styled .def-title {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: #b45309;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .def-box-styled.def-blue .def-title { color: #0284c7; }
+        .def-box-styled.def-pink .def-title { color: #db2777; }
+
+        .def-box-styled .def-content {
+            font-size: 0.92rem;
+            line-height: 1.7;
+            color: #78350f;
+        }
+        .def-box-styled.def-blue .def-content { color: #0c4a6e; }
+        .def-box-styled.def-pink .def-content { color: #831843; }
+
+        /* MATH HERO DISPLAY BOX */
+        .math-hero-box {
+            background: #ffffff;
+            border: 1.5px solid var(--border-soft);
+            border-radius: var(--radius-xl);
+            padding: 22px;
+            text-align: center;
+            margin: 18px 0;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.02);
+            overflow-x: auto;
+        }
+
+        .step-accordion {
+            background: #f8fafc;
+            border: 1.5px solid var(--border-soft);
+            border-radius: var(--radius-xl);
+            padding: 20px;
+            margin: 16px 0;
+        }
+
+        .step-header {
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: var(--secondary);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* MARI MENCOBA CONTAINER */
+        .mari-mencoba-card {
+            background: linear-gradient(145deg, #ffffff, #f0fdfa);
+            border: 2px solid #99f6e4;
+            border-radius: var(--radius-2xl);
+            padding: 26px;
+            margin-top: 24px;
+            position: relative;
+            box-shadow: 0 10px 25px rgba(13, 148, 136, 0.08);
+        }
+
+        .mari-mencoba-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
+        .mari-tag {
+            background: linear-gradient(135deg, #db2777, #f43f5e);
+            color: white;
+            font-weight: 800;
+            font-size: 0.8rem;
+            padding: 6px 16px;
+            border-radius: 99px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 4px 10px rgba(219, 39, 119, 0.3);
+        }
+
+        .mari-mencoba-card h3 {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: var(--text-dark);
+        }
+
+        /* MATRIX INPUT BRACKETS */
+        .matrix-input-bracket {
+            display: inline-grid;
+            gap: 8px;
+            padding: 14px 16px;
+            border-left: 3px solid var(--primary);
+            border-right: 3px solid var(--primary);
+            border-radius: 12px;
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            vertical-align: middle;
+            margin: 10px 0;
+        }
+
+        .grid-3x3 { grid-template-columns: repeat(3, 62px); }
+        .grid-3x2 { grid-template-columns: repeat(2, 62px); }
+        .grid-2x2 { grid-template-columns: repeat(2, 62px); }
+        .grid-2x3 { grid-template-columns: repeat(3, 62px); }
+
+        .matrix-cell-input {
+            width: 100%;
+            height: 42px;
+            text-align: center;
+            font-size: 0.95rem;
+            font-weight: 800;
+            border: 1.5px solid var(--border-soft);
+            border-radius: var(--radius-md);
+            background: #f8fafc;
+            color: var(--text-dark);
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .matrix-cell-input:focus {
+            border-color: var(--primary);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.18);
+        }
+
+        .matrix-cell-input.correct {
+            border-color: #10b981 !important;
+            background: #ecfdf5 !important;
+            color: #065f46 !important;
+        }
+
+        .matrix-cell-input.wrong {
+            border-color: #f43f5e !important;
+            background: #fff1f2 !important;
+            color: #9f1239 !important;
+        }
+
+        .btn-check-ans {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: var(--radius-lg);
+            font-weight: 800;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 6px 16px rgba(2, 132, 199, 0.3);
+            transition: all 0.2s;
+        }
+
+        .btn-check-ans:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(2, 132, 199, 0.4);
+        }
+
+        .btn-reveal-solution {
+            background: #f1f5f9;
+            color: var(--text-dark);
+            border: 1.5px solid var(--border-soft);
+            padding: 12px 20px;
+            border-radius: var(--radius-lg);
+            font-weight: 700;
+            font-size: 0.88rem;
+            cursor: pointer;
+            margin-left: 10px;
+            transition: all 0.2s;
+        }
+
+        .btn-reveal-solution:hover {
+            background: #e2e8f0;
+        }
+
+        /* PROPERTIES GRID (SLIDE 2 & SLIDE 5) */
+        .properties-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 18px;
+            margin: 20px 0;
+        }
+
+        .prop-item-card {
+            background: #ffffff;
+            border-radius: var(--radius-xl);
+            border: 1.5px solid var(--border-soft);
+            padding: 20px;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .prop-item-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(2, 132, 199, 0.08);
+        }
+
+        .prop-item-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 800;
+            font-size: 1rem;
+            color: var(--primary-dark);
+            margin-bottom: 8px;
+        }
+
+        .prop-icon-badge {
+            width: 36px;
+            height: 36px;
+            background: var(--primary-soft);
+            color: var(--primary-dark);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+
+        /* ORDO MATCHING CHECKER (SLIDE 3) */
+        .ordo-checker-box {
+            background: #f8fafc;
+            border: 1.5px dashed #cbd5e1;
+            border-radius: var(--radius-xl);
+            padding: 24px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .ordo-match-display {
+            display: inline-flex;
+            align-items: center;
+            gap: 16px;
+            background: white;
+            padding: 14px 28px;
+            border-radius: 16px;
+            border: 1.5px solid var(--border-soft);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            margin: 14px 0;
+        }
+
+        .ordo-badge {
+            font-size: 1.15rem;
+            font-weight: 800;
+            padding: 6px 14px;
+            border-radius: 10px;
+        }
+
+        .badge-match-inner {
+            background: #ecfdf5;
+            color: #047857;
+            border: 1.5px solid #6ee7b7;
+        }
+
+        .badge-match-outer {
+            background: #eff6ff;
+            color: #1d4ed8;
+            border: 1.5px solid #93c5fd;
+        }
+
+        /* MATRIX PLAYGROUND LAB (SLIDE 5) */
+        .lab-container {
+            background: #ffffff;
+            border-radius: var(--radius-2xl);
+            border: 1.5px solid var(--border-soft);
+            padding: 28px;
+            box-shadow: var(--shadow-card);
+        }
+
+        .lab-control-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 20px;
+            border-bottom: 1.5px solid #f1f5f9;
+            margin-bottom: 24px;
+        }
+
+        .lab-pill-btn {
+            border: none;
+            background: #f1f5f9;
+            padding: 8px 16px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .lab-pill-btn.active {
+            background: var(--primary);
+            color: white;
+            font-weight: 800;
+            box-shadow: 0 3px 10px rgba(2, 132, 199, 0.25);
+        }
+
+        .lab-calculator-flex {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin: 24px 0;
+        }
+
+        .lab-matrix-card {
+            background: #f8fafc;
+            border: 1.5px solid var(--border-soft);
+            border-radius: var(--radius-xl);
+            padding: 18px;
+            text-align: center;
+        }
+
+        .lab-matrix-card h4 {
+            font-size: 0.88rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            color: var(--text-muted);
+        }
+
+        .lab-operator-badge {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary);
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--primary-soft);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .lab-result-card {
+            background: linear-gradient(135deg, #f0fdfa 0%, #e0f2fe 100%);
+            border: 2px dashed #0284c7;
+            border-radius: var(--radius-xl);
+            padding: 24px;
+            margin-top: 24px;
+            text-align: center;
+        }
+
+        /* Toast Popup */
+        #appToast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #0f172a;
+            color: white;
+            padding: 14px 22px;
+            border-radius: var(--radius-lg);
+            font-size: 0.9rem;
+            font-weight: 700;
+            box-shadow: 0 14px 28px rgba(0,0,0,0.2);
+            display: none;
+            align-items: center;
+            gap: 10px;
+            z-index: 1000;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @media (max-width: 1080px) {
+            .app-window {
+                grid-template-columns: 1fr;
+            }
+            .sidebar {
+                display: none;
+            }
+            .hero-banner {
+                margin: 20px 20px 10px;
+                padding: 24px;
+            }
+            .content-canvas {
+                padding: 10px 20px 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-window">
+    
+    <!-- SIDEBAR KIRI -->
+    <aside class="sidebar">
+        <div>
+            <!-- Brand Header -->
+            <div class="brand-section">
+                <div class="brand-logo-icon">
+                    <i class="fa-solid fa-calculator"></i>
+                </div>
+                <div class="brand-title-text">
+                    <h2>AL MAZAYA</h2>
+                    <p>Islamic School</p>
+                </div>
+            </div>
+
+            <!-- Slide Menu Items -->
+            <div class="nav-label">Sub-Bab: Perkalian Matriks</div>
+            <nav class="slide-nav-menu">
+                <button class="slide-nav-btn active" onclick="goToSlide(1)">
+                    <i class="fa-solid fa-asterisk"></i>
+                    <span>Perkalian Skalar</span>
+                    <span class="slide-num-pill">Slide 1</span>
+                </button>
+                <button class="slide-nav-btn" onclick="goToSlide(2)">
+                    <i class="fa-solid fa-network-wired"></i>
+                    <span>Sifat Perkalian Skalar</span>
+                    <span class="slide-num-pill">Slide 2</span>
+                </button>
+                <button class="slide-nav-btn" onclick="goToSlide(3)">
+                    <i class="fa-solid fa-shapes"></i>
+                    <span>Konsep Dua Matriks</span>
+                    <span class="slide-num-pill">Slide 3</span>
+                </button>
+                <button class="slide-nav-btn" onclick="goToSlide(4)">
+                    <i class="fa-solid fa-shuffle"></i>
+                    <span>Contoh 3.8 & Keterdefinisian</span>
+                    <span class="slide-num-pill">Slide 4</span>
+                </button>
+                <button class="slide-nav-btn" onclick="goToSlide(5)">
+                    <i class="fa-solid fa-flask"></i>
+                    <span>Sifat & Matrix Lab</span>
+                    <span class="slide-num-pill">Slide 5</span>
+                </button>
+            </nav>
+        </div>
+
+        <div class="sidebar-promo-card">
+            <div style="font-size: 1.8rem; margin-bottom: 8px;">✨</div>
+            <h4>E-Learning Interaktif</h4>
+            <p>Matematika Tingkat Lanjut Kelas XI Fase F</p>
+            <button class="btn-quick-calc" onclick="goToSlide(5)">
+                Buka Lab Perkalian <i class="fa-solid fa-arrow-right"></i>
+            </button>
+        </div>
+    </aside>
+
+    <!-- AREA VIEWPORT KANAN -->
+    <main class="main-viewport">
+        
+        <!-- Top Navbar -->
+        <div class="top-navbar">
+            <div class="breadcrumb-tag">
+                <span class="badge-class">Kelas 11</span>
+                <i class="fa-solid fa-chevron-right" style="font-size:0.65rem;"></i>
+                <span>Matematika Tingkat Lanjut</span>
+                <i class="fa-solid fa-chevron-right" style="font-size:0.65rem;"></i>
+                <b style="color:var(--text-dark);">Perkalian Matriks</b>
+            </div>
+
+            <div class="header-controls">
+                <button class="slide-stepper-btn" id="btnPrevSlide" onclick="prevSlide()">
+                    <i class="fa-solid fa-chevron-left"></i> Prev
+                </button>
+                <span class="slide-indicator-tag" id="slideIndicator">Slide 1 dari 5</span>
+                <button class="slide-stepper-btn" id="btnNextSlide" onclick="nextSlide()">
+                    Next <i class="fa-solid fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Hero Banner Elegan & Simetris -->
+        <section class="hero-banner">
+            <div class="hero-content">
+                <div class="hero-pill-badge" id="heroSlideTag">
+                    <i class="fa-solid fa-bolt"></i> <span id="heroSlideTagText">BAGIAN 1 • KELAS XI AL MAZAYA</span>
+                </div>
+                <h1 id="heroSlideTitle">Perkalian Matriks dengan Skalar</h1>
+                <p id="heroSlideSubtitle">
+                    Pelajari konsep perkalian skalar, perkalian dua matriks (baris kali kolom), syarat ordo, serta sifat-sifatnya.
+                </p>
+                <div class="hero-stats-row">
+                    <div class="hero-stat-pill">
+                        <i class="fa-solid fa-graduation-cap"></i> Modul Kelas XI
+                    </div>
+                    <div class="hero-stat-pill">
+                        <i class="fa-solid fa-school"></i> Al Mazaya Islamic School
+                    </div>
+                    <div class="hero-stat-pill">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> Pembelajaran Interaktif
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- KONTEN SLIDE CANVAS -->
+        <div class="content-canvas">
+
+            <!-- ========================================================================= -->
+            <!-- SLIDE 1: DEFINISI 3.6 PERKALIAN SKALAR, CONTOH 3.7 & MARI MENCOBA         -->
+            <!-- ========================================================================= -->
+            <div id="slide-1" class="slide-pane active">
+                
+                <article class="learning-card">
+                    <span class="card-badge badge-amber"><i class="fa-solid fa-book-bookmark"></i> Konsep Dasar</span>
+                    <h2 class="card-headline">1. Perkalian Matriks dengan Skalar</h2>
+                    <p class="card-desc">
+                        Perkalian matriks dengan skalar diperoleh dengan cara <b>mengalikan setiap elemen</b> yang ada di dalam matriks tersebut dengan sebuah bilangan real (skalar).
+                    </p>
+
+                    <!-- Definisi 3.6 Sesuai Buku -->
+                    <div class="def-box-styled">
+                        <div class="def-title"><i class="fa-solid fa-circle-check"></i> Definisi 3.6: Perkalian Matriks dengan Skalar</div>
+                        <div class="def-content">
+                            Jika matriks $A$ adalah matriks yang berordo $m \times n$ dan $k$ adalah bilangan real ($k$ sering disebut <b>skalar</b>), maka $kA$ menyatakan matriks yang diperoleh dengan mengalikan setiap elemen pada matriks $A$ dengan $k$.
+                            $$kA = k \cdot \begin{bmatrix} a_{ij} \end{bmatrix} = \begin{bmatrix} k \cdot a_{ij} \end{bmatrix}$$
+                        </div>
+                    </div>
+                </article>
+
+                <article class="learning-card">
+                    <span class="card-badge badge-pink"><i class="fa-solid fa-pencil"></i> Telaah Contoh</span>
+                    <h2 class="card-headline">Contoh 3.7: Perkalian Skalar Pecahan & Negatif</h2>
+                    <p class="card-desc">Misalkan $P = \begin{bmatrix} -1 & \frac{1}{4} & -\frac{1}{2} \\ -6 & 1 & -4 \end{bmatrix}$, tentukan $2P$.</p>
+
+                    <div class="step-accordion">
+                        <div class="step-header"><i class="fa-solid fa-code-fork"></i> Alternatif Penyelesaian Langkah-demi-Langkah:</div>
+                        <p class="card-desc" style="margin-bottom:8px;">Kalikan angka skalar <b>2</b> ke setiap elemen matriks $P$:</p>
+                        <div class="math-hero-box" style="background:#fafafa;">
+                            $$2P = 2 \begin{bmatrix} -1 & \frac{1}{4} & -\frac{1}{2} \\ -6 & 1 & -4 \end{bmatrix} = \begin{bmatrix} 2 \times (-1) & 2 \times \frac{1}{4} & 2 \times \left(-\frac{1}{2}\right) \\ 2 \times (-6) & 2 \times 1 & 2 \times (-4) \end{bmatrix} = \begin{bmatrix} -2 & \frac{1}{2} & -1 \\ -12 & 2 & -8 \end{bmatrix}$$
+                        </div>
+                    </div>
+
+                    <!-- MARI MENCOBA SLIDE 1: kQ dengan k=4 -->
+                    <div class="mari-mencoba-card">
+                        <div class="mari-mencoba-header">
+                            <span class="mari-tag"><i class="fa-solid fa-pen-fancy"></i> Mari Mencoba</span>
+                            <h3>Tentukan Hasil Perkalian Skalar $kQ$ Berikut:</h3>
+                        </div>
+                        
+                        <p class="card-desc">
+                            Jika $Q = \begin{bmatrix} 2 & \frac{1}{4} & -\frac{1}{2} \\ 1 & \frac{1}{2} & \frac{3}{4} \\ 3 & 8 & 1 \end{bmatrix}$ dan $k = 4$, maka tentukan nilai $kQ = 4Q$:
+                        </p>
+
+                        <div class="math-hero-box" style="background:white;">
+                            $$4Q = 4 \begin{bmatrix} 2 & \frac{1}{4} & -\frac{1}{2} \\ 1 & \frac{1}{2} & \frac{3}{4} \\ 3 & 8 & 1 \end{bmatrix} = \begin{bmatrix} 4(2) & 4\left(\frac{1}{4}\right) & 4\left(-\frac{1}{2}\right) \\ 4(1) & 4\left(\frac{1}{2}\right) & 4\left(\frac{3}{4}\right) \\ 4(3) & 4(8) & 4(1) \end{bmatrix} = \text{?}$$
+                        </div>
+
+                        <!-- Grid Input Siswa (Ordo 3x3) -->
+                        <div style="text-align:center;">
+                            <div class="matrix-input-bracket grid-3x3">
+                                <input type="number" id="s1_q11" class="matrix-cell-input" placeholder="c11">
+                                <input type="number" id="s1_q12" class="matrix-cell-input" placeholder="c12">
+                                <input type="number" id="s1_q13" class="matrix-cell-input" placeholder="c13">
+                                <input type="number" id="s1_q21" class="matrix-cell-input" placeholder="c21">
+                                <input type="number" id="s1_q22" class="matrix-cell-input" placeholder="c22">
+                                <input type="number" id="s1_q23" class="matrix-cell-input" placeholder="c23">
+                                <input type="number" id="s1_q31" class="matrix-cell-input" placeholder="c31">
+                                <input type="number" id="s1_q32" class="matrix-cell-input" placeholder="c32">
+                                <input type="number" id="s1_q33" class="matrix-cell-input" placeholder="c33">
+                            </div>
+                        </div>
+
+                        <div style="margin-top:16px; text-align:center;">
+                            <button class="btn-check-ans" onclick="checkSlide1Practice()">
+                                <i class="fa-solid fa-circle-check"></i> Periksa Jawaban $4Q$
+                            </button>
+                            <button class="btn-reveal-solution" onclick="revealSlide1Solution()">
+                                <i class="fa-solid fa-eye"></i> Tampilkan Kunci
+                            </button>
+                            <div id="feedbackSlide1" style="margin-top:12px; font-weight:800; font-size:0.92rem;"></div>
+                        </div>
+                    </div>
+                </article>
+
+            </div>
+
+            <!-- ========================================================================= -->
+            <!-- SLIDE 2: SIFAT 3.2 SIFAT-SIFAT PERKALIAN SKALAR                            -->
+            <!-- ========================================================================= -->
+            <div id="slide-2" class="slide-pane">
+                
+                <article class="learning-card">
+                    <span class="card-badge badge-blue"><i class="fa-solid fa-atom"></i> Sifat Aritmetika</span>
+                    <h2 class="card-headline">Sifat 3.2: Sifat-Sifat Perkalian Matriks dengan Skalar</h2>
+                    <p class="card-desc">
+                        Misalkan matriks $A$ dan $B$ merupakan matriks-matriks yang berordo sama, serta $k$ dan $h$ merupakan skalar (bilangan real), maka memenuhi ketentuan berikut:
+                    </p>
+
+                    <div class="properties-grid">
+                        <div class="prop-item-card">
+                            <div class="prop-item-header">
+                                <div class="prop-icon-badge"><i class="fa-regular fa-circle"></i></div>
+                                <span>1. Perkalian Matriks Nol & Skalar Nol</span>
+                            </div>
+                            <p class="card-desc">Skalar dikali matriks nol atau skalar 0 dikali matriks menghasilkan matriks nol:</p>
+                            <div class="math-hero-box" style="padding:12px; color:var(--primary-dark); font-weight:800;">
+                                $$kO = O \quad \text{dan} \quad 0A = O$$
+                            </div>
+                        </div>
+
+                        <div class="prop-item-card">
+                            <div class="prop-item-header">
+                                <div class="prop-icon-badge"><i class="fa-solid fa-layer-group"></i></div>
+                                <span>2. Bersifat Asosiatif Skalar</span>
+                            </div>
+                            <p class="card-desc">Pengelompokan perkalian skalar dapat disederhanakan terlebih dahulu:</p>
+                            <div class="math-hero-box" style="padding:12px; color:var(--primary-dark); font-weight:800;">
+                                $$h(kA) = (hk)A$$
+                            </div>
+                        </div>
+
+                        <div class="prop-item-card">
+                            <div class="prop-item-header">
+                                <div class="prop-icon-badge"><i class="fa-solid fa-arrows-split-up-and-left"></i></div>
+                                <span>3. Distributif terhadap Skalar</span>
+                            </div>
+                            <p class="card-desc">Penjumlahan atau pengurangan dua skalar dapat didistribusikan ke matriks $A$:</p>
+                            <div class="math-hero-box" style="padding:12px; color:var(--primary-dark); font-weight:800;">
+                                $$(h \pm k)A = hA \pm kA$$
+                            </div>
+                        </div>
+
+                        <div class="prop-item-card">
+                            <div class="prop-item-header">
+                                <div class="prop-icon-badge"><i class="fa-solid fa-network-wired"></i></div>
+                                <span>4. Distributif terhadap Matriks</span>
+                            </div>
+                            <p class="card-desc">Skalar $k$ dapat didistribusikan ke operasi penjumlahan dua matriks:</p>
+                            <div class="math-hero-box" style="padding:12px; color:var(--primary-dark); font-weight:800;">
+                                $$k(A \pm B) = (kA) \pm (kB)$$
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Simulator Live Distributif -->
+                    <div class="step-accordion" style="background:#ffffff; border-color:#bae6fd;">
+                        <div class="step-header" style="color:var(--primary-dark);">
+                            <i class="fa-solid fa-vial"></i> Eksperimen Interaktif: $k(A + B) = kA + kB$
+                        </div>
+                        <p class="card-desc">Ubah nilai skalar $k$ atau elemen matriks untuk membuktikan kesamaan sifat distributif secara langsung:</p>
+                        
+                        <div style="display:flex; justify-content:center; align-items:center; gap:16px; flex-wrap:wrap; margin:16px 0;">
+                            <div>
+                                <label style="font-size:0.85rem; font-weight:800; color:#334155; display:block; margin-bottom:4px;">Skalar $k$:</label>
+                                <input type="number" id="sim_k" value="3" style="width:70px; height:42px; text-align:center; font-weight:800; border-radius:10px; border:1.5px solid var(--border-soft);" oninput="updateDistributifLive()">
+                            </div>
+
+                            <div>
+                                <span style="font-weight:800; font-size:0.9rem; color:#475569;">Matriks $A$</span>
+                                <div class="matrix-input-bracket grid-2x2">
+                                    <input type="number" id="sim_a11" class="matrix-cell-input" value="2" oninput="updateDistributifLive()">
+                                    <input type="number" id="sim_a12" class="matrix-cell-input" value="-1" oninput="updateDistributifLive()">
+                                    <input type="number" id="sim_a21" class="matrix-cell-input" value="0" oninput="updateDistributifLive()">
+                                    <input type="number" id="sim_a22" class="matrix-cell-input" value="4" oninput="updateDistributifLive()">
+                                </div>
+                            </div>
+
+                            <span style="font-size:1.6rem; font-weight:800; color:var(--primary);">+</span>
+
+                            <div>
+                                <span style="font-weight:800; font-size:0.9rem; color:#475569;">Matriks $B$</span>
+                                <div class="matrix-input-bracket grid-2x2">
+                                    <input type="number" id="sim_b11" class="matrix-cell-input" value="1" oninput="updateDistributifLive()">
+                                    <input type="number" id="sim_b12" class="matrix-cell-input" value="3" oninput="updateDistributifLive()">
+                                    <input type="number" id="sim_b21" class="matrix-cell-input" value="-2" oninput="updateDistributifLive()">
+                                    <input type="number" id="sim_b22" class="matrix-cell-input" value="1" oninput="updateDistributifLive()">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="distributifLiveResult" class="math-hero-box" style="background:#f0f9ff; border-color:#bae6fd;">
+                            <!-- Diupdate otomatis oleh JS -->
+                        </div>
+                    </div>
+                </article>
+
+            </div>
+
+            <!-- ========================================================================= -->
+            <!-- SLIDE 3: DEFINISI 3.7 PERKALIAN DUA MATRIKS & ATURAN ORDO                 -->
+            <!-- ========================================================================= -->
+            <div id="slide-3" class="slide-pane">
+                
+                <article class="learning-card">
+                    <span class="card-badge badge-amber"><i class="fa-solid fa-shapes"></i> Konsep Utama</span>
+                    <h2 class="card-headline">2. Perkalian Dua Matriks</h2>
+                    <p class="card-desc">
+                        Dua matriks dapat dikalikan <b>jika dan hanya jika</b> banyak kolom matriks pertama sama dengan banyak baris matriks kedua.
+                    </p>
+
+                    <!-- Definisi 3.7 Sesuai Buku -->
+                    <div class="def-box-styled">
+                        <div class="def-title"><i class="fa-solid fa-circle-check"></i> Definisi 3.7: Perkalian Dua Matriks</div>
+                        <div class="def-content">
+                            Jika matriks $A$ adalah matriks berordo $m \times n$ dan $B$ adalah matriks berordo $n \times p$, maka ada matriks $C$ yang merupakan hasil perkalian matriks $A$ dengan matriks $B$ atau $C = AB$. Matriks $C$ berordo $m \times p$ dan elemen-elemen $c_{ij}$ dihitung dengan cara mengalikan elemen baris ke-$i$ pada matriks $A$ terhadap elemen kolom ke-$j$ pada matriks $B$, kemudian ditambahkan hasilnya:
+                            $$c_{ij} = a_{i1} \cdot b_{1j} + a_{i2} \cdot b_{2j} + a_{i3} \cdot b_{3j} + \dots + a_{in} \cdot b_{nj}$$
+                        </div>
+                    </div>
+                </article>
+
+                <article class="learning-card">
+                    <span class="card-badge badge-emerald"><i class="fa-solid fa-arrows-left-right-to-line"></i> Syarat & Kunci Ordo</span>
+                    <h2 class="card-headline">Skema Kesesuaian Ordo Perkalian Matriks</h2>
+                    
+                    <div class="ordo-checker-box">
+                        <p style="font-size:0.95rem; font-weight:700; color:#334155; margin-bottom:12px;">
+                            Perhatikan keterkaitan dimensi ukuran ordo berikut:
+                        </p>
+
+                        <div class="ordo-match-display">
+                            <span class="ordo-badge badge-match-outer">A<sub>m × <b>n</b></sub></span>
+                            <span style="font-size:1.4rem; font-weight:800; color:var(--text-muted);">×</span>
+                            <span class="ordo-badge badge-match-outer">B<sub><b>n</b> × p</sub></span>
+                            <span style="font-size:1.4rem; font-weight:800; color:var(--primary);">=</span>
+                            <span class="ordo-badge badge-match-inner">C<sub>m × p</sub></span>
+                        </div>
+
+                        <p style="font-size:0.88rem; color:#64748b; line-height:1.6; max-width:680px; margin:0 auto;">
+                            • <b>Syarat Kalikan:</b> Angka tengah (banyak kolom $A$ dan banyak baris $B$) <b>harus sama persis ($n$)</b>.<br>
+                            • <b>Hasil Ordo:</b> Angka luar (banyak baris $A$ dan banyak kolom $B$) membentuk ordo matriks hasil yaitu <b>$m \times p$</b>.
+                        </p>
+                    </div>
+
+                    <!-- Interactive Ordo Checker Tool -->
+                    <div class="step-accordion" style="background:#f8fafc;">
+                        <div class="step-header"><i class="fa-solid fa-magnifying-glass"></i> Cek Cepat: Apakah Matriks Dapat Dikalikan?</div>
+                        <p class="card-desc">Pilih ordo dua matriks di bawah untuk menguji apakah perkalian dapat dilakukan:</p>
+
+                        <div style="display:flex; justify-content:center; align-items:center; gap:16px; flex-wrap:wrap; margin:16px 0;">
+                            <div>
+                                <span style="font-weight:800; font-size:0.85rem; color:#475569;">Ordo Matriks A:</span>
+                                <div style="display:flex; gap:6px; margin-top:4px;">
+                                    <select id="chk_r1" onchange="testOrdoMatch()" style="padding:8px 12px; border-radius:8px; border:1.5px solid var(--border-soft); font-weight:700;">
+                                        <option value="2">2 Baris</option>
+                                        <option value="3" selected>3 Baris</option>
+                                    </select>
+                                    <span style="align-self:center; font-weight:800;">×</span>
+                                    <select id="chk_c1" onchange="testOrdoMatch()" style="padding:8px 12px; border-radius:8px; border:1.5px solid var(--border-soft); font-weight:700;">
+                                        <option value="2">2 Kolom</option>
+                                        <option value="3" selected>3 Kolom</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <span style="font-size:1.6rem; font-weight:800; color:var(--primary);">×</span>
+
+                            <div>
+                                <span style="font-weight:800; font-size:0.85rem; color:#475569;">Ordo Matriks B:</span>
+                                <div style="display:flex; gap:6px; margin-top:4px;">
+                                    <select id="chk_r2" onchange="testOrdoMatch()" style="padding:8px 12px; border-radius:8px; border:1.5px solid var(--border-soft); font-weight:700;">
+                                        <option value="2">2 Baris</option>
+                                        <option value="3" selected>3 Baris</option>
+                                    </select>
+                                    <span style="align-self:center; font-weight:800;">×</span>
+                                    <select id="chk_c2" onchange="testOrdoMatch()" style="padding:8px 12px; border-radius:8px; border:1.5px solid var(--border-soft); font-weight:700;">
+                                        <option value="2" selected>2 Kolom</option>
+                                        <option value="3">3 Kolom</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="ordoCheckResult" style="text-align:center; padding:12px; font-weight:800; font-size:0.95rem;">
+                            <!-- Output oleh JS -->
+                        </div>
+                    </div>
+                </article>
+
+            </div>
+
+            <!-- ========================================================================= -->
+            <!-- SLIDE 4: CONTOH 3.8, ANALISIS KETERDEFINISIAN & MARI MENCOBA               -->
+            <!-- ========================================================================= -->
+            <div id="slide-4" class="slide-pane">
+                
+                <article class="learning-card">
+                    <span class="card-badge badge-pink"><i class="fa-solid fa-code-fork"></i> Telaah Contoh</span>
+                    <h2 class="card-headline">Contoh 3.8: Perkalian Matriks $AB$ & Analisis $BA$</h2>
+                    
+                    <p class="card-desc">
+                        Diketahui matriks-matriks:
+                    </p>
+                    <div class="math-hero-box">
+                        $$A = \begin{bmatrix} -7 & 2 & -2 \\ 1 & 0 & -1 \\ 2 & 3 & -1 \end{bmatrix} \quad \text{dan} \quad B = \begin{bmatrix} 1 & 2 \\ -1 & 3 \\ 2 & 0 \end{bmatrix}, \quad \text{tentukan matriks } AB \text{ dan matriks } BA.$$
+                    </div>
+
+                    <div class="step-accordion">
+                        <div class="step-header">Alternatif Penyelesaian $AB$:</div>
+                        <p class="card-desc">
+                            Matriks $A$ berordo $3 \times 3$ dan $B$ berordo $3 \times 2$. Karena banyak kolom $A$ (3) sama dengan banyak baris $B$ (3), maka $AB$ dapat dikalikan dan menghasilkan matriks berordo $3 \times 2$:
+                        </p>
+
+                        <div class="math-hero-box" style="background:#fafafa; text-align:left; font-size:0.92rem;">
+                            $$AB = \begin{bmatrix} -7 & 2 & -2 \\ 1 & 0 & -1 \\ 2 & 3 & -1 \end{bmatrix} \begin{bmatrix} 1 & 2 \\ -1 & 3 \\ 2 & 0 \end{bmatrix}$$
+                            $$= \begin{bmatrix} -7(1) + 2(-1) + (-2)(2) & -7(2) + 2(3) + (-2)(0) \\ 1(1) + 0(-1) + (-1)(2) & 1(2) + 0(3) + (-1)(0) \\ 2(1) + 3(-1) + (-1)(2) & 2(2) + 3(3) + (-1)(0) \end{bmatrix}$$
+                            $$= \begin{bmatrix} -7 + (-2) + (-4) & -14 + 6 + 0 \\ 1 + 0 + (-2) & 2 + 0 + 0 \\ 2 + (-3) + (-2) & 4 + 9 + 0 \end{bmatrix} = \begin{bmatrix} -13 & -8 \\ -1 & 2 \\ -3 & 13 \end{bmatrix}$$
+                        </div>
+
+                        <!-- Catatan Penting Mengapa BA Tidak Terdefinisi Sesuai Gambar Buku -->
+                        <div style="background:#fff1f2; border-left:4px solid #f43f5e; padding:14px 18px; border-radius:10px; margin-top:14px;">
+                            <b style="color:#be123c;"><i class="fa-solid fa-triangle-exclamation"></i> Mengapa Matriks $BA$ Tidak Terdefinisi?</b>
+                            <p style="color:#881337; font-size:0.88rem; margin-top:4px;">
+                                Matriks $B$ berordo $3 \times 2$ (2 kolom) sedangkan matriks $A$ berordo $3 \times 3$ (3 baris). <b>Matriks $BA$ tidak terdefinisi</b> karena banyak kolom pada matriks $B$ (2) tidak sama dengan banyak baris pada matriks $A$ (3).
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- MARI MENCOBA SLIDE 4: C(2x3) dan D(2x2) -->
+                    <div class="mari-mencoba-card">
+                        <div class="mari-mencoba-header">
+                            <span class="mari-tag"><i class="fa-solid fa-pen-fancy"></i> Mari Mencoba</span>
+                            <h3>Mari Mencoba: Tentukan Matriks $CD$ dan Matriks $DC$</h3>
+                        </div>
+
+                        <p class="card-desc">
+                            Jika $C = \begin{bmatrix} 1 & -3 & 3 \\ 1 & 2 & 2 \end{bmatrix}$ (ordo $2 \times 3$) dan $D = \begin{bmatrix} 1 & -4 \\ 8 & 2 \end{bmatrix}$ (ordo $2 \times 2$), tentukan matriks $CD$ dan matriks $DC$:
+                        </p>
+
+                        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:20px; margin:16px 0;">
+                            <!-- Pertanyaan 1: CD -->
+                            <div style="background:white; border:1.5px solid var(--border-soft); border-radius:var(--radius-lg); padding:18px;">
+                                <h4 style="font-weight:800; color:#0369a1; margin-bottom:8px;">1. Apakah matriks $CD$ terdefinisi?</h4>
+                                <p style="font-size:0.84rem; color:var(--text-muted); margin-bottom:10px;">
+                                    $C_{2 \times 3}$ dikali $D_{2 \times 2}$:
+                                </p>
+                                <select id="ans_cd_status" style="width:100%; padding:10px; border-radius:10px; border:1.5px solid var(--border-soft); font-weight:700;">
+                                    <option value="">-- Pilih Status CD --</option>
+                                    <option value="TIDAK">Tidak Terdefinisi (Kolom C ≠ Baris D)</option>
+                                    <option value="YA">Terdefinisi</option>
+                                </select>
+                            </div>
+
+                            <!-- Pertanyaan 2: DC -->
+                            <div style="background:white; border:1.5px solid var(--border-soft); border-radius:var(--radius-lg); padding:18px;">
+                                <h4 style="font-weight:800; color:#0369a1; margin-bottom:8px;">2. Hitung Matriks $DC$ ($2 \times 2 \times 2 \times 3 = 2 \times 3$):</h4>
+                                <p style="font-size:0.84rem; color:var(--text-muted); margin-bottom:8px;">
+                                    $$D \cdot C = \begin{bmatrix} 1 & -4 \\ 8 & 2 \end{bmatrix} \begin{bmatrix} 1 & -3 & 3 \\ 1 & 2 & 2 \end{bmatrix}$$
+                                </p>
+                                
+                                <div style="text-align:center;">
+                                    <div class="matrix-input-bracket grid-2x3">
+                                        <input type="number" id="dc_11" class="matrix-cell-input" placeholder="r11">
+                                        <input type="number" id="dc_12" class="matrix-cell-input" placeholder="r12">
+                                        <input type="number" id="dc_13" class="matrix-cell-input" placeholder="r13">
+                                        <input type="number" id="dc_21" class="matrix-cell-input" placeholder="r21">
+                                        <input type="number" id="dc_22" class="matrix-cell-input" placeholder="r22">
+                                        <input type="number" id="dc_23" class="matrix-cell-input" placeholder="r23">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="margin-top:16px; text-align:center;">
+                            <button class="btn-check-ans" onclick="checkSlide4Practice()">
+                                <i class="fa-solid fa-circle-check"></i> Periksa Jawaban $CD$ & $DC$
+                            </button>
+                            <button class="btn-reveal-solution" onclick="revealSlide4Solution()">
+                                <i class="fa-solid fa-eye"></i> Kunci Jawaban
+                            </button>
+                            <div id="feedbackSlide4" style="margin-top:12px; font-weight:800; font-size:0.92rem;"></div>
+                        </div>
+                    </div>
+                </article>
+
+            </div>
+
+            <!-- ========================================================================= -->
+            <!-- SLIDE 5: SIFAT 3.3 & MATRIX MULTIPLICATION LAB SIMULATOR                  -->
+            <!-- ========================================================================= -->
+            <div id="slide-5" class="slide-pane">
+                
+                <article class="learning-card">
+                    <span class="card-badge badge-blue"><i class="fa-solid fa-brain"></i> Sifat Aritmetika</span>
+                    <h2 class="card-headline">Sifat 3.3: Sifat-Sifat Perkalian Dua Matriks</h2>
+                    <p class="card-desc">
+                        Misalkan matriks $A, B, C,$ dan $I$ merupakan matriks-matriks yang berordo sama sehingga operasi perkalian dan penjumlahan terdefinisi, serta $I$ merupakan matriks identitas:
+                    </p>
+
+                    <div class="properties-grid">
+                        <div class="prop-item-card">
+                            <div class="prop-item-header">
+                                <div class="prop-icon-badge"><i class="fa-solid fa-layer-group"></i></div>
+                                <span>1. Bersifat Asosiatif</span>
+                            </div>
+                            <p class="card-desc">Pengelompokan urutan perkalian tiga matriks menghasilkan matriks yang sama:</p>
+                            <div class="math-hero-box" style="padding:12px; color:var(--primary-dark); font-weight:800;">
+                                $$(AB)C = A(BC)$$
+                            </div>
+                        </div>
+
+                        <div class="prop-item-card">
+                            <div class="prop-item-header">
+                                <div class="prop-icon-badge"><i class="fa-solid fa-fingerprint"></i></div>
+                                <span>2. Matriks Identitas ($I$)</span>
+                            </div>
+                            <p class="card-desc">Perkalian dengan matriks identitas $I$ menghasilkan matriks itu sendiri:</p>
+                            <div class="math-hero-box" style="padding:12px; color:var(--primary-dark); font-weight:800;">
+                                $$AI = IA = A$$
+                            </div>
+                        </div>
+
+                        <div class="prop-item-card">
+                            <div class="prop-item-header">
+                                <div class="prop-icon-badge"><i class="fa-solid fa-arrows-split-up-and-left"></i></div>
+                                <span>3. Bersifat Distributif</span>
+                            </div>
+                            <p class="card-desc">Distributif terhadap operasi penjumlahan dan pengurangan matriks:</p>
+                            <div class="math-hero-box" style="padding:12px; color:var(--primary-dark); font-weight:800; font-size:0.88rem;">
+                                $$A(B \pm C) = AB \pm AC$$
+                                $$(A \pm B)C = AC \pm BC$$
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="background:#fff7ed; border-left:4px solid #f97316; padding:14px 18px; border-radius:10px; margin-top:8px;">
+                        <b style="color:#c2410c;"><i class="fa-solid fa-circle-exclamation"></i> Ingat: Perkalian Matriks TIDAK KOMUTATIF!</b>
+                        <p style="color:#9a3412; font-size:0.88rem; margin-top:4px;">
+                            Secara umum, pada perkalian dua matriks <b>$AB \neq BA$</b>. Bahkan salah satunya bisa saja tidak terdefinisi seperti pada Contoh 3.8.
+                        </p>
+                    </div>
+                </article>
+
+                <!-- INTERACTIVE MATRIX MULTIPLICATION SIMULATOR LAB -->
+                <article class="lab-container">
+                    <div class="lab-control-bar">
+                        <div>
+                            <span class="card-badge badge-emerald"><i class="fa-solid fa-flask"></i> Interactive Simulator</span>
+                            <h2 style="font-size:1.35rem; font-weight:800; margin:0;">Matrix Multiplication Lab</h2>
+                            <p style="font-size:0.85rem; color:var(--text-muted); margin-top:2px;">
+                                Eksplorasi perkalian dua matriks $A \times B$ secara otomatis dengan perhitungan langkah-demi-langkah.
+                            </p>
+                        </div>
+
+                        <div style="display:flex; gap:8px;">
+                            <button class="lab-pill-btn active" id="btnLab2x2" onclick="setLabPreset('2x2')">(2×2) × (2×2)</button>
+                            <button class="lab-pill-btn" id="btnLab2x3" onclick="setLabPreset('2x3')">(2×3) × (3×2)</button>
+                            <button class="lab-pill-btn" id="btnLab3x3" onclick="setLabPreset('3x3')">(3×3) × (3×3)</button>
+                        </div>
+                    </div>
+
+                    <!-- Area Input Matriks A dan B -->
+                    <div class="lab-calculator-flex">
+                        <div class="lab-matrix-card">
+                            <h4 id="labTitleA">Matriks A (2×2)</h4>
+                            <div id="labContA" class="matrix-input-bracket grid-2x2"></div>
+                        </div>
+
+                        <div class="lab-operator-badge">×</div>
+
+                        <div class="lab-matrix-card">
+                            <h4 id="labTitleB">Matriks B (2×2)</h4>
+                            <div id="labContB" class="matrix-input-bracket grid-2x2"></div>
+                        </div>
+                    </div>
+
+                    <div style="text-align:center; margin-top:10px;">
+                        <button class="btn-check-ans" onclick="calculateLabMultiplication()">
+                            <i class="fa-solid fa-bolt"></i> Kalikan Matriks Sekarang
+                        </button>
+                        <button class="btn-reveal-solution" onclick="randomizeLabMatrix()">
+                            <i class="fa-solid fa-dice"></i> Acak Bilangan
+                        </button>
+                    </div>
+
+                    <!-- Hasil Live Kalkulator -->
+                    <div class="lab-result-card" id="labResultWrapper" style="display:none;">
+                        <h4 style="font-weight:800; color:var(--primary-dark); font-size:1.1rem; margin-bottom:12px;">
+                            <i class="fa-solid fa-square-root-variable"></i> Langkah Baris × Kolom & Matriks Hasil $AB$:
+                        </h4>
+                        <div id="labStepMath" style="font-size:1rem; overflow-x:auto; padding:10px 0;"></div>
+                    </div>
+                </article>
+
+            </div>
+
+        </div>
+    </main>
+
+</div>
+
+<!-- TOAST POPUP NOTIFIKASI -->
+<div id="appToast">
+    <i class="fa-solid fa-bell"></i>
+    <span id="toastMsg">Pemberitahuan</span>
+</div>
+
+<script>
+    // State Navigasi
+    let currentSlide = 1;
+    const totalSlides = 5;
+
+    const slideMeta = [
+        { title: "Perkalian Matriks dengan Skalar", sub: "Definisi 3.6, Contoh 3.7 (Elemen Pecahan), dan Latihan Mandiri 4Q Ordo 3x3." },
+        { title: "Sifat-Sifat Perkalian Skalar", sub: "Sifat 3.2: Asosiatif Skalar, Distributif terhadap Skalar & Matriks, serta Simulator Live." },
+        { title: "Konsep Perkalian Dua Matriks", sub: "Definisi 3.7: Baris kali Kolom, Kunci Kesesuaian Ordo (m x n) x (n x p), dan Ordo Checker." },
+        { title: "Contoh 3.8 & Keterdefinisian", sub: "Perhitungan Langkah AB, Mengapa BA Tidak Terdefinisi, dan Latihan Interaktif CD & DC." },
+        { title: "Sifat 3.3 & Matrix Multiplication Lab", sub: "Asosiatif, Matriks Identitas (I), Bukti Tidak Komutatif, serta Simulator Perkalian Interaktif." }
+    ];
+
+    function showToast(msg) {
+        const toast = document.getElementById('appToast');
+        document.getElementById('toastMsg').innerText = msg;
+        toast.style.display = 'flex';
+        setTimeout(() => {
+            toast.style.display = 'none';
+        }, 2800);
+    }
+
+    function goToSlide(n) {
+        if (n < 1 || n > totalSlides) return;
+        currentSlide = n;
+
+        // Toggle Panes
+        document.querySelectorAll('.slide-pane').forEach((p, idx) => {
+            p.classList.toggle('active', idx + 1 === currentSlide);
+        });
+
+        // Toggle Sidebar buttons
+        document.querySelectorAll('.slide-nav-btn').forEach((btn, idx) => {
+            btn.classList.toggle('active', idx + 1 === currentSlide);
+        });
+
+        // Update Steppers
+        document.getElementById('slideIndicator').innerText = `Slide ${currentSlide} dari ${totalSlides}`;
+        document.getElementById('btnPrevSlide').disabled = (currentSlide === 1);
+        document.getElementById('btnNextSlide').disabled = (currentSlide === totalSlides);
+
+        // Update Hero Banner (Rapi, Seimbang & Di Tengah)
+        document.getElementById('heroSlideTagText').innerText = `BAGIAN ${currentSlide} • KELAS XI AL MAZAYA`;
+        document.getElementById('heroSlideTitle').innerText = slideMeta[currentSlide - 1].title;
+        document.getElementById('heroSlideSubtitle').innerText = slideMeta[currentSlide - 1].sub;
+
+        if (window.MathJax && typeof MathJax.typesetPromise === 'function') {
+            MathJax.typesetPromise();
+        }
+
+        if (currentSlide === 2) {
+            updateDistributifLive();
+        } else if (currentSlide === 3) {
+            testOrdoMatch();
+        } else if (currentSlide === 5) {
+            initLabDefault();
+        }
+    }
+
+    function nextSlide() {
+        if (currentSlide < totalSlides) goToSlide(currentSlide + 1);
+    }
+
+    function prevSlide() {
+        if (currentSlide > 1) goToSlide(currentSlide - 1);
+    }
+
+    // =========================================================================
+    // VALIDASI MARI MENCOBA SLIDE 1 (kQ dengan k=4)
+    // Q = [2, 1/4, -1/2 ; 1, 1/2, 3/4 ; 3, 8, 1]
+    // 4Q = [4(2)=8, 4(1/4)=1, 4(-1/2)=-2 ; 4(1)=4, 4(1/2)=2, 4(3/4)=3 ; 4(3)=12, 4(8)=32, 4(1)=4]
+    // =========================================================================
+    const keySlide1 = {
+        s1_q11: 8,   s1_q12: 1,   s1_q13: -2,
+        s1_q21: 4,   s1_q22: 2,   s1_q23: 3,
+        s1_q31: 12,  s1_q32: 32,  s1_q33: 4
+    };
+
+    function checkSlide1Practice() {
+        let isAllCorrect = true;
+        for (let id in keySlide1) {
+            const input = document.getElementById(id);
+            const val = parseInt(input.value.trim(), 10);
+            if (val === keySlide1[id]) {
+                input.classList.remove('wrong');
+                input.classList.add('correct');
+            } else {
+                input.classList.remove('correct');
+                input.classList.add('wrong');
+                isAllCorrect = false;
+            }
+        }
+
+        const fb = document.getElementById('feedbackSlide1');
+        if (isAllCorrect) {
+            fb.style.color = "var(--primary-dark)";
+            fb.innerHTML = '<i class="fa-solid fa-circle-check"></i> Luar biasa! Semua elemen perkalian skalar 4Q tepat!';
+            showToast("Jawaban Slide 1 Benar!");
+        } else {
+            fb.style.color = "#be123c";
+            fb.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> Masih ada elemen yang keliru (bertanda merah). Perhatikan perkalian pecahan dengan 4!';
+        }
+    }
+
+    function revealSlide1Solution() {
+        for (let id in keySlide1) {
+            const input = document.getElementById(id);
+            input.value = keySlide1[id];
+            input.classList.remove('wrong');
+            input.classList.add('correct');
+        }
+        document.getElementById('feedbackSlide1').style.color = "var(--secondary)";
+        document.getElementById('feedbackSlide1').innerHTML = '<i class="fa-solid fa-circle-info"></i> Kunci jawaban 4Q telah ditampilkan.';
+    }
+
+    // =========================================================================
+    // SLIDE 2: EXPERIMEN LIVE SIFAT DISTRIBUTIF k(A + B) = kA + kB
+    // =========================================================================
+    function updateDistributifLive() {
+        const k = parseFloat(document.getElementById('sim_k').value) || 0;
+        const a11 = parseFloat(document.getElementById('sim_a11').value) || 0;
+        const a12 = parseFloat(document.getElementById('sim_a12').value) || 0;
+        const a21 = parseFloat(document.getElementById('sim_a21').value) || 0;
+        const a22 = parseFloat(document.getElementById('sim_a22').value) || 0;
+
+        const b11 = parseFloat(document.getElementById('sim_b11').value) || 0;
+        const b12 = parseFloat(document.getElementById('sim_b12').value) || 0;
+        const b21 = parseFloat(document.getElementById('sim_b21').value) || 0;
+        const b22 = parseFloat(document.getElementById('sim_b22').value) || 0;
+
+        // k(A + B)
+        const ab11 = a11 + b11, ab12 = a12 + b12;
+        const ab21 = a21 + b21, ab22 = a22 + b22;
+
+        const res11 = k * ab11, res12 = k * ab12;
+        const res21 = k * ab21, res22 = k * ab22;
+
+        const container = document.getElementById('distributifLiveResult');
+        container.innerHTML = `
+            $$k(A + B) = ${k} \\left( \\begin{bmatrix} ${a11} & ${a12} \\\\ ${a21} & ${a22} \\end{bmatrix} + \\begin{bmatrix} ${b11} & ${b12} \\\\ ${b21} & ${b22} \\end{bmatrix} \\right) = ${k} \\begin{bmatrix} ${ab11} & ${ab12} \\\\ ${ab21} & ${ab22} \\end{bmatrix} = \\begin{bmatrix} ${res11} & ${res12} \\\\ ${res21} & ${res22} \\end{bmatrix}$$
+            $$kA + kB = \\begin{bmatrix} ${k*a11} & ${k*a12} \\\\ ${k*a21} & ${k*a22} \\end{bmatrix} + \\begin{bmatrix} ${k*b11} & ${k*b12} \\\\ ${k*b21} & ${k*b22} \\end{bmatrix} = \\begin{bmatrix} ${res11} & ${res12} \\\\ ${res21} & ${res22} \\end{bmatrix}$$
+            <p style="font-size:0.88rem; font-weight:800; color:#0369a1; margin-top:8px;">
+                ✓ Terbukti Identik: Nilai $k(A + B)$ sama persis dengan $(kA) + (kB)$.
+            </p>
+        `;
+
+        if (window.MathJax && typeof MathJax.typesetPromise === 'function') {
+            MathJax.typesetPromise([container]);
+        }
+    }
+
+    // =========================================================================
+    // SLIDE 3: INTERACTIVE ORDO MATCH CHECKER
+    // =========================================================================
+    function testOrdoMatch() {
+        const r1 = parseInt(document.getElementById('chk_r1').value, 10);
+        const c1 = parseInt(document.getElementById('chk_c1').value, 10);
+        const r2 = parseInt(document.getElementById('chk_r2').value, 10);
+        const c2 = parseInt(document.getElementById('chk_c2').value, 10);
+
+        const resBox = document.getElementById('ordoCheckResult');
+        if (c1 === r2) {
+            resBox.innerHTML = `
+                <div style="display:inline-flex; align-items:center; gap:8px; color:#059669; font-size:1.05rem; font-weight:800; margin-bottom:4px;">
+                    <i class="fa-solid fa-circle-check"></i> DAPAT DIKALIKAN!
+                </div><br>
+                <span style="color:#475569; font-size:0.92rem; font-weight:600; line-height:1.6;">
+                    Banyak kolom <b><i>A</i></b> (${c1}) = banyak baris <b><i>B</i></b> (${r2}). Hasil perkalian <b><i>C</i></b> berordo <b>${r1} &times; ${c2}</b>.
+                </span>
+            `;
+        } else {
+            resBox.innerHTML = `
+                <div style="display:inline-flex; align-items:center; gap:8px; color:#dc2626; font-size:1.05rem; font-weight:800; margin-bottom:4px;">
+                    <i class="fa-solid fa-circle-xmark"></i> TIDAK DAPAT DIKALIKAN!
+                </div><br>
+                <span style="color:#475569; font-size:0.92rem; font-weight:600; line-height:1.6;">
+                    Banyak kolom <b><i>A</i></b> (${c1}) tidak sama dengan banyak baris <b><i>B</i></b> (${r2}).
+                </span>
+            `;
+        }
+
+        if (window.MathJax && typeof MathJax.typesetPromise === 'function') {
+            MathJax.typesetPromise([resBox]);
+        }
+    }
+
+    // =========================================================================
+    // VALIDASI MARI MENCOBA SLIDE 4 (C: 2x3, D: 2x2)
+    // CD = 2x3 kali 2x2 => TIDAK TERDEFINISI (kolom C = 3 != baris D = 2)
+    // DC = 2x2 kali 2x3 => TERDEFINISI (ordo 2x3)
+    // D = [1, -4 ; 8, 2], C = [1, -3, 3 ; 1, 2, 2]
+    // Baris 1:
+    // dc11 = 1(1) + (-4)(1) = 1 - 4 = -3
+    // dc12 = 1(-3) + (-4)(2) = -3 - 8 = -11
+    // dc13 = 1(3) + (-4)(2) = 3 - 8 = -5
+    // Baris 2:
+    // dc21 = 8(1) + 2(1) = 8 + 2 = 10
+    // dc22 = 8(-3) + 2(2) = -24 + 4 = -20
+    // dc23 = 8(3) + 2(2) = 24 + 4 = 28
+    // DC = [-3, -11, -5 ; 10, -20, 28]
+    // =========================================================================
+    const keySlide4 = {
+        dc_11: -3,   dc_12: -11,  dc_13: -5,
+        dc_21: 10,   dc_22: -20,  dc_23: 28
+    };
+
+    function checkSlide4Practice() {
+        const cdStatus = document.getElementById('ans_cd_status').value;
+        let isStatusCorrect = (cdStatus === "TIDAK");
+
+        let isDcCorrect = true;
+        for (let id in keySlide4) {
+            const input = document.getElementById(id);
+            const val = parseInt(input.value.trim(), 10);
+            if (val === keySlide4[id]) {
+                input.classList.remove('wrong');
+                input.classList.add('correct');
+            } else {
+                input.classList.remove('correct');
+                input.classList.add('wrong');
+                isDcCorrect = false;
+            }
+        }
+
+        const fb = document.getElementById('feedbackSlide4');
+        if (isStatusCorrect && isDcCorrect) {
+            fb.style.color = "var(--primary-dark)";
+            fb.innerHTML = '<i class="fa-solid fa-circle-check"></i> Sempurna! Status $CD$ dan matriks $DC$ terjawab dengan benar!';
+            showToast("Jawaban Slide 4 Benar!");
+        } else {
+            fb.style.color = "#be123c";
+            fb.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> Masih ada jawaban yang belum tepat. Cek kembali pilihan status $CD$ atau elemen matriks $DC$!';
+        }
+    }
+
+    function revealSlide4Solution() {
+        document.getElementById('ans_cd_status').value = "TIDAK";
+        for (let id in keySlide4) {
+            const input = document.getElementById(id);
+            input.value = keySlide4[id];
+            input.classList.remove('wrong');
+            input.classList.add('correct');
+        }
+        document.getElementById('feedbackSlide4').style.color = "var(--secondary)";
+        document.getElementById('feedbackSlide4').innerHTML = '<i class="fa-solid fa-circle-info"></i> Kunci jawaban CD & DC ditampilkan.';
+    }
+
+    // =========================================================================
+    // SLIDE 5: MATRIX MULTIPLICATION LAB SIMULATOR
+    // =========================================================================
+    let currentPreset = '2x2';
+
+    function setLabPreset(preset) {
+        currentPreset = preset;
+        document.getElementById('btnLab2x2').classList.toggle('active', preset === '2x2');
+        document.getElementById('btnLab2x3').classList.toggle('active', preset === '2x3');
+        document.getElementById('btnLab3x3').classList.toggle('active', preset === '3x3');
+        renderLabMultiplicationGrids();
+        document.getElementById('labResultWrapper').style.display = 'none';
+    }
+
+    function getPresetDimensions(preset) {
+        if (preset === '2x2') return { rA: 2, cA: 2, rB: 2, cB: 2 };
+        if (preset === '2x3') return { rA: 2, cA: 3, rB: 3, cB: 2 };
+        if (preset === '3x3') return { rA: 3, cA: 3, rB: 3, cB: 3 };
+        return { rA: 2, cA: 2, rB: 2, cB: 2 };
+    }
+
+    function renderLabMultiplicationGrids() {
+        const { rA, cA, rB, cB } = getPresetDimensions(currentPreset);
+
+        document.getElementById('labTitleA').innerText = `Matriks A (${rA}×${cA})`;
+        document.getElementById('labTitleB').innerText = `Matriks B (${rB}×${cB})`;
+
+        const contA = document.getElementById('labContA');
+        const contB = document.getElementById('labContB');
+
+        contA.className = `matrix-input-bracket grid-${rA}x${cA}`;
+        contB.className = `matrix-input-bracket grid-${rB}x${cB}`;
+
+        let htmlA = '', htmlB = '';
+        for (let i = 1; i <= rA; i++) {
+            for (let j = 1; j <= cA; j++) {
+                htmlA += `<input type="number" id="mlA_${i}_${j}" class="matrix-cell-input" value="${(i + j)}">`;
+            }
+        }
+        for (let i = 1; i <= rB; i++) {
+            for (let j = 1; j <= cB; j++) {
+                htmlB += `<input type="number" id="mlB_${i}_${j}" class="matrix-cell-input" value="${(i * 2 - j)}">`;
+            }
+        }
+        contA.innerHTML = htmlA;
+        contB.innerHTML = htmlB;
+    }
+
+    function randomizeLabMatrix() {
+        const { rA, cA, rB, cB } = getPresetDimensions(currentPreset);
+        for (let i = 1; i <= rA; i++) {
+            for (let j = 1; j <= cA; j++) {
+                const el = document.getElementById(`mlA_${i}_${j}`);
+                if (el) el.value = Math.floor(Math.random() * 9) - 4; // -4 sd 4
+            }
+        }
+        for (let i = 1; i <= rB; i++) {
+            for (let j = 1; j <= cB; j++) {
+                const el = document.getElementById(`mlB_${i}_${j}`);
+                if (el) el.value = Math.floor(Math.random() * 9) - 4;
+            }
+        }
+        calculateLabMultiplication();
+    }
+
+    function calculateLabMultiplication() {
+        const { rA, cA, rB, cB } = getPresetDimensions(currentPreset);
+
+        let matA = [], matB = [], matC = [];
+        let stepGrid = [];
+
+        // Ambil elemen A
+        for (let i = 1; i <= rA; i++) {
+            let row = [];
+            for (let j = 1; j <= cA; j++) {
+                row.push(parseFloat(document.getElementById(`mlA_${i}_${j}`).value) || 0);
+            }
+            matA.push(row);
+        }
+
+        // Ambil elemen B
+        for (let i = 1; i <= rB; i++) {
+            let row = [];
+            for (let j = 1; j <= cB; j++) {
+                row.push(parseFloat(document.getElementById(`mlB_${i}_${j}`).value) || 0);
+            }
+            matB.push(row);
+        }
+
+        // Perkalian Matriks C = A x B
+        for (let i = 0; i < rA; i++) {
+            let rowC = [];
+            let rowStep = [];
+            for (let j = 0; j < cB; j++) {
+                let sum = 0;
+                let terms = [];
+                for (let k = 0; k < cA; k++) {
+                    const prod = matA[i][k] * matB[k][j];
+                    sum += prod;
+                    terms.push(`${matA[i][k]}(${matB[k][j]})`);
+                }
+                rowC.push(sum);
+                rowStep.push(terms.join(" + "));
+            }
+            matC.push(rowC);
+            stepGrid.push(rowStep.join(" & "));
+        }
+
+        const formatLatex = (mat) => `\\begin{bmatrix} ${mat.map(r => r.join(" & ")).join(" \\\\ ")} \\end{bmatrix}`;
+
+        const latexStr = `
+            $$A_{${rA}\\times${cA}} \\times B_{${rB}\\times${cB}} = ${formatLatex(matA)} \\times ${formatLatex(matB)}$$
+            $$= \\begin{bmatrix} ${stepGrid.join(" \\\\ ")} \\end{bmatrix} = \\mathbf{${formatLatex(matC)}}_{${rA}\\times${cB}}$$
+        `;
+
+        const wrapper = document.getElementById('labResultWrapper');
+        const container = document.getElementById('labStepMath');
+        container.innerHTML = latexStr;
+        wrapper.style.display = 'block';
+
+        if (window.MathJax && typeof MathJax.typesetPromise === 'function') {
+            MathJax.typesetPromise([container]);
+        }
+    }
+
+    function initLabDefault() {
+        renderLabMultiplicationGrids();
+        calculateLabMultiplication();
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        goToSlide(1);
+    });
+</script>
+
+</body>
+</html>
